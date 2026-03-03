@@ -13,6 +13,5 @@
 </svelte:head>
 
 <div class="flex flex-col h-screen w-screen">
-  <Header />
   {@render children()}
 </div>

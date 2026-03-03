@@ -1,15 +1,17 @@
 
 
+
 <script lang="ts">
   import { writable, type Writable } from "svelte/store";
   import { onMount } from "svelte"
   import loadingBoxGif from "$lib/assets/loading-boxes.gif"
 
-  const sampleImages = Object.values( import.meta.glob("$lib/assets/tarpulin-samples/*", {as: "URL"} ) )
-  const loadedImages: Writable<(null | string)[]> = writable( Array.from({length: Object.keys(sampleImages).length}, () => null) )
-
+  const sampleImages = Array.from( Object.values(import.meta.glob("$lib/assets/tarpulin-samples/*", {as: "URL", eager: true} ) ), (item) => item.default )
   const imagesReference: Element[] = []
 
+  const loadedImages = writable<(null | HTMLImageElement)[]>([])
+
+  console.log(sampleImages)
   let gallaryContainer: HTMLElement;
 
   onMount( async () => {
@@ -17,9 +19,10 @@
       entries.forEach( async (entry) => {
         if(entry.isIntersecting) {
           const index = imagesReference.indexOf(entry.target);
-          const image = await sampleImages[index]()
+          const imageUrl = sampleImages[index] 
           loadedImages.update((array) => {
-            array[index] = image.default  
+            array[index] = new Image() 
+            array[index].src = imageUrl
             return array
           }) 
         }
